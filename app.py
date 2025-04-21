@@ -1,10 +1,14 @@
+import os
 from flask import Flask, request, render_template, redirect
 import sqlite3
 
 app = Flask(__name__)
 
+# Initialize database
 def init_db():
-    conn = sqlite3.connect('bookings.db')
+    # Using a relative path so it works correctly on Render
+    db_path = os.path.join(os.path.dirname(__file__), 'bookings.db')
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS bookings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -26,7 +30,8 @@ def home():
 @app.route('/book', methods=['POST'])
 def book():
     data = request.form
-    conn = sqlite3.connect('bookings.db')
+    db_path = os.path.join(os.path.dirname(__file__), 'bookings.db')
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute('INSERT INTO bookings (name, phone, vehicle, service, date) VALUES (?, ?, ?, ?, ?)',
               (data['name'], data['phone'], data['vehicle'], data['service'], data['date']))
@@ -36,7 +41,8 @@ def book():
 
 @app.route('/admin')
 def admin():
-    conn = sqlite3.connect('bookings.db')
+    db_path = os.path.join(os.path.dirname(__file__), 'bookings.db')
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute('SELECT * FROM bookings')
     bookings = c.fetchall()
@@ -48,4 +54,6 @@ def thankyou():
     return "Thank you for your booking!"
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Use the port specified by Render
+    port = int(os.environ.get('PORT', 5000))  # Default to 5000 if PORT not set
+    app.run(host='0.0.0.0', port=port, debug=True)
