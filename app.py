@@ -25,8 +25,7 @@ init_db()
 
 @app.route('/')
 def home():
-    return 'Backend running!'
-
+    return render_template('index.html')
 @app.route('/book', methods=['POST'])
 def book():
     data = request.form
