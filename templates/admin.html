@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin - Bookings</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { padding: 10px; border: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <h1>All Bookings</h1>
+  <table>
+    <tr>
+      <th>ID</th><th>Name</th><th>Phone</th><th>Vehicle</th><th>Service</th><th>Date</th>
+    </tr>
+    {% for b in bookings %}
+    <tr>
+      <td>{{ b[0] }}</td><td>{{ b[1] }}</td><td>{{ b[2] }}</td><td>{{ b[3] }}</td><td>{{ b[4] }}</td><td>{{ b[5] }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>
