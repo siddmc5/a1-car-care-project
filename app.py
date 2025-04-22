@@ -1,9 +1,9 @@
 import os
 from flask import Flask, request, render_template, redirect
+from flask_cors import CORS
 import sqlite3
-
 app = Flask(__name__)
-
+CORS(app)
 # Initialize database
 def init_db():
     # Using a relative path so it works correctly on Render
