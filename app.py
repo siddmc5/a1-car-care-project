@@ -28,19 +28,15 @@ def home():
     return render_template('index.html')
 @app.route('/book', methods=['POST'])
 def book():
-    try:
-        data = request.form
-        print("Received data:", data)  # Debug print to see what's coming in
-        conn = sqlite3.connect('bookings.db')
-        c = conn.cursor()
-        c.execute('INSERT INTO bookings (name, phone, vehicle, service, date) VALUES (?, ?, ?, ?, ?)',
-                  (data['name'], data['phone'], data['vehicle'], data['service'], data['date']))
-        conn.commit()
-        conn.close()
-        return redirect('/thankyou')
-    except Exception as e:
-        print(f"Error: {e}")  # Print the error if something goes wrong
-        return "Something went wrong, please try again."
+    data = request.form
+    conn = sqlite3.connect('bookings.db')
+    c = conn.cursor()
+    c.execute('INSERT INTO bookings (name, phone, vehicle, service, date) VALUES (?, ?, ?, ?, ?)',
+              (data['name'], data['phone'], data['vehicle'], data['service'], data['date']))
+    conn.commit()
+    conn.close()
+    return redirect('/thankyou')
+
 
 @app.route('/admin')
 def admin():
