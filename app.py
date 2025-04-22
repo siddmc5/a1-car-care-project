@@ -2,13 +2,16 @@ import os
 from flask import Flask, request, render_template, redirect
 from flask_cors import CORS
 import sqlite3
+
 app = Flask(__name__)
 CORS(app)
+
+# Get the absolute path to bookings.db
+DB_PATH = os.path.join(os.path.dirname(__file__), 'bookings.db')
+
 # Initialize database
 def init_db():
-    # Using a relative path so it works correctly on Render
-    db_path = os.path.join(os.path.dirname(__file__), 'bookings.db')
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS bookings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -26,10 +29,11 @@ init_db()
 @app.route('/')
 def home():
     return render_template('index.html')
+
 @app.route('/book', methods=['POST'])
 def book():
     data = request.form
-    conn = sqlite3.connect('bookings.db')
+    conn = sqlite3.connect(DB_PATH)  # 🔧 fixed path
     c = conn.cursor()
     c.execute('INSERT INTO bookings (name, phone, vehicle, service, date) VALUES (?, ?, ?, ?, ?)',
               (data['name'], data['phone'], data['vehicle'], data['service'], data['date']))
@@ -37,11 +41,9 @@ def book():
     conn.close()
     return redirect('/thankyou')
 
-
 @app.route('/admin')
 def admin():
-    db_path = os.path.join(os.path.dirname(__file__), 'bookings.db')
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute('SELECT * FROM bookings')
     bookings = c.fetchall()
@@ -53,6 +55,5 @@ def thankyou():
     return "Thank you for your booking!"
 
 if __name__ == '__main__':
-    # Use the port specified by Render
-    port = int(os.environ.get('PORT', 5000))  # Default to 5000 if PORT not set
+    port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
