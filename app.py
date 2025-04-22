@@ -6,12 +6,10 @@ import sqlite3
 app = Flask(__name__)
 CORS(app)
 
-# Get the absolute path to bookings.db
-DB_PATH = os.path.join(os.path.dirname(__file__), 'bookings.db')
-
 # Initialize database
 def init_db():
-    conn = sqlite3.connect(DB_PATH)
+    db_path = os.path.join(os.path.dirname(__file__), 'bookings.db')
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS bookings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,7 +31,8 @@ def home():
 @app.route('/book', methods=['POST'])
 def book():
     data = request.form
-    conn = sqlite3.connect(DB_PATH)  # 🔧 fixed path
+    db_path = os.path.join(os.path.dirname(__file__), 'bookings.db')  # FIXED PATH
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute('INSERT INTO bookings (name, phone, vehicle, service, date) VALUES (?, ?, ?, ?, ?)',
               (data['name'], data['phone'], data['vehicle'], data['service'], data['date']))
@@ -43,7 +42,8 @@ def book():
 
 @app.route('/admin')
 def admin():
-    conn = sqlite3.connect(DB_PATH)
+    db_path = os.path.join(os.path.dirname(__file__), 'bookings.db')
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute('SELECT * FROM bookings')
     bookings = c.fetchall()
