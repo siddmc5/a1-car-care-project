@@ -38,6 +38,9 @@ def book():
               (data['name'], data['phone'], data['vehicle'], data['service'], data['date']))
     conn.commit()
     conn.close()
+
+    print(f"Booking saved: {data['name']} - {data['service']}")  # Debugging log
+
     return redirect('/thankyou')
 
 @app.route('/admin')
@@ -48,6 +51,9 @@ def admin():
     c.execute('SELECT * FROM bookings')
     bookings = c.fetchall()
     conn.close()
+
+    print("Bookings retrieved for admin view:", bookings)  # Debugging log
+
     return render_template('admin.html', bookings=bookings)
 
 @app.route('/thankyou')
